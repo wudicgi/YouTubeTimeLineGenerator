@@ -30,25 +30,11 @@ namespace YouTubeTimeLineGenerator
             this.textBoxSourceFileContent.DragDrop += new DragEventHandler(textBoxSourceFileContent_DragDrop);
         }
 
-        //private void OldOrNew()
-        //{
-        //    if(radioButton_new.Checked == true)
-        //    {
-        //        string stringNew = "";
-        //        for (int i = 11; i < textBox_vtt.Lines.Count()+11; i = i + 8)
-        //        {
-        //            stringNew += textBox_vtt.Lines[i] + "\r\n" + textBox_vtt.Lines[i + 3] + "\r\n";
-        //        }
-        //        textBox_vttResult.Text = stringNew;
-        //    }
-        //}
-
         private void buttonProcessSourceFile_Click(object sender, EventArgs e)
         {
             try
             {
                 buttonLoadWords.Enabled = true;
-                textBox_vttResult.Clear();
                 _subtitleWordList.Clear();
                 if (radioButtonSourceFileTypeVtt.Checked == true)
                 {
@@ -86,7 +72,6 @@ namespace YouTubeTimeLineGenerator
                     strXML += textBoxSourceFileContent.Lines[i] + "\r\n";
                 }
 
-                textBox_vttResult.Text = strXML;
                 _subtitleWordList.Clear();
 
                 XmlDocument myXMLDoc = new XmlDocument();
@@ -243,7 +228,6 @@ namespace YouTubeTimeLineGenerator
                 }
             }
 
-            textBox_vttResult.Text = sContent;
             foreach (var text in textBoxSourceFileContent.Lines)
             {
                 //match TimeLine                

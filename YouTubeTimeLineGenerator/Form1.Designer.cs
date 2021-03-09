@@ -33,7 +33,6 @@ namespace YouTubeTimeLineGenerator
             this.textBoxSourceFileContent = new System.Windows.Forms.TextBox();
             this.richTextBoxAssResult = new System.Windows.Forms.RichTextBox();
             this.buttonConvertToAssFile = new System.Windows.Forms.Button();
-            this.textBox_vttResult = new System.Windows.Forms.TextBox();
             this.radioButtonSourceFileTypeVtt = new System.Windows.Forms.RadioButton();
             this.groupBoxSourceFileType = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanelSourceFileType = new System.Windows.Forms.TableLayoutPanel();
@@ -91,7 +90,7 @@ namespace YouTubeTimeLineGenerator
             this.richTextBoxAssResult.ScrollBars = System.Windows.Forms.RichTextBoxScrollBars.ForcedBoth;
             this.richTextBoxAssResult.Size = new System.Drawing.Size(1360, 326);
             this.richTextBoxAssResult.TabIndex = 80;
-            this.richTextBoxAssResult.Text = resources.GetString("richTextBoxAssResult.Text");
+            this.richTextBoxAssResult.Text = resources.GetString("richTextBox_ass.Text");
             // 
             // buttonConvertToAssFile
             // 
@@ -104,17 +103,6 @@ namespace YouTubeTimeLineGenerator
             this.buttonConvertToAssFile.Text = "Convert to ASS";
             this.buttonConvertToAssFile.UseVisualStyleBackColor = true;
             this.buttonConvertToAssFile.Click += new System.EventHandler(this.buttonConvertToAssFile_Click);
-            // 
-            // textBox_vttResult
-            // 
-            this.textBox_vttResult.Location = new System.Drawing.Point(825, 3);
-            this.textBox_vttResult.Multiline = true;
-            this.textBox_vttResult.Name = "textBox_vttResult";
-            this.textBox_vttResult.ScrollBars = System.Windows.Forms.ScrollBars.Both;
-            this.textBox_vttResult.Size = new System.Drawing.Size(118, 31);
-            this.textBox_vttResult.TabIndex = 7;
-            this.textBox_vttResult.Visible = false;
-            this.textBox_vttResult.WordWrap = false;
             // 
             // radioButtonSourceFileTypeVtt
             // 
@@ -304,7 +292,6 @@ namespace YouTubeTimeLineGenerator
             this.tableLayoutPanelOperations.Controls.Add(this.groupBoxSourceFileType, 0, 0);
             this.tableLayoutPanelOperations.Controls.Add(this.buttonProcessSourceFile, 1, 0);
             this.tableLayoutPanelOperations.Controls.Add(this.buttonConvertToAssFile, 4, 0);
-            this.tableLayoutPanelOperations.Controls.Add(this.textBox_vttResult, 3, 0);
             this.tableLayoutPanelOperations.Controls.Add(this.buttonLoadWords, 2, 0);
             this.tableLayoutPanelOperations.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanelOperations.Location = new System.Drawing.Point(3, 3);
@@ -344,7 +331,6 @@ namespace YouTubeTimeLineGenerator
         private System.Windows.Forms.TextBox textBoxSourceFileContent;
         //private FlickerFreeListBox listBox1;
         private System.Windows.Forms.Button buttonConvertToAssFile;
-        private System.Windows.Forms.TextBox textBox_vttResult;
         private System.Windows.Forms.RichTextBox richTextBoxAssResult;
         //private FlickerFreeListBox listBox2;
         private System.Windows.Forms.RadioButton radioButtonSourceFileTypeVtt;
