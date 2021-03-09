@@ -17,81 +17,8 @@ namespace YouTubeTimeLineGenerator
 {
     public partial class Form1 : Form
     {
-        List<subtitle> mySubtitle = new List<subtitle>();
+        List<SubtitleWord> mySubtitle = new List<SubtitleWord>();
         string[] filesPath;
-        class subtitle
-        {
-            public string Content
-            {
-                get
-                {
-                    return content;
-                }
-
-                set
-                {
-                    content = value;
-                }
-            }
-
-            public string WordStart
-            {
-                get
-                {
-                    return timeStart;
-                }
-
-                set
-                {
-                    timeStart = value;
-                }
-            }
-
-            public string WordEnd
-            {
-                get
-                {
-                    return timeEnd;
-                }
-
-                set
-                {
-                    timeEnd = value;
-                }
-            }
-
-            public int Position
-            {
-                get
-                {
-                    return position;
-                }
-
-                set
-                {
-                    position = value;
-                }
-            }
-
-            public bool Selected
-            {
-                get
-                {
-                    return selected;
-                }
-
-                set
-                {
-                    selected = value;
-                }
-            }
-
-            private string content;
-            private string timeStart;
-            private string timeEnd;
-            private int position;
-            private bool selected;
-        }
 
         public Form1()
         {
@@ -243,7 +170,7 @@ namespace YouTubeTimeLineGenerator
                                     ssFlag++;
                                     //Debug.WriteLine(Content + "\t" + WordStart + "\t" + WordEnd);
                                     Debug.WriteLine(sContent + "\t" + msToTime(sWordStart) + "\t" + msToTime(sWordEnd) + "\t" + sPosition);
-                                    mySubtitle.Add(new subtitle { Content = sContent, WordStart = msToTime(sWordStart), WordEnd = msToTime(sWordEnd), Position = sPosition, Selected = false });
+                                    mySubtitle.Add(new SubtitleWord { Content = sContent, WordStart = msToTime(sWordStart), WordEnd = msToTime(sWordEnd), Position = sPosition, Selected = false });
                                     sPosition = sPosition + sContent.Length + 1;
                                 }
                                 Debug.WriteLine("");
@@ -331,7 +258,7 @@ namespace YouTubeTimeLineGenerator
                             {
                                 sWordEnd = m.Groups["WordEnd"].Value;
                             }
-                            mySubtitle.Add(new subtitle { Content = m.Groups["Content"].Value, WordStart = sWordStart, WordEnd = sWordEnd, Position = sPosition, Selected = false });
+                            mySubtitle.Add(new SubtitleWord { Content = m.Groups["Content"].Value, WordStart = sWordStart, WordEnd = sWordEnd, Position = sPosition, Selected = false });
                             sPosition = sPosition + m.Groups["Content"].Value.Length + 1;
                             sWordStart = sWordEnd;
                         }
@@ -376,7 +303,7 @@ namespace YouTubeTimeLineGenerator
         }
 
 
-        private void generateASS(List<subtitle> input)
+        private void generateASS(List<SubtitleWord> input)
         {
             richTextBox_ass.Clear();
             List<int> selectedItemIndexes = new List<int>();
