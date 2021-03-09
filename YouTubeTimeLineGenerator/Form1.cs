@@ -19,8 +19,6 @@ namespace YouTubeTimeLineGenerator
     {
         private List<SubtitleWord> _subtitleWordList = new List<SubtitleWord>();
 
-        private string[] _filesPath;
-
         public Form1()
         {
             InitializeComponent();
@@ -64,7 +62,6 @@ namespace YouTubeTimeLineGenerator
 
         private void processXML()
         {
-            if (_filesPath[0] != "")
             {
                 string strXML = "";
                 for (int i = 0; i < textBoxSourceFileContent.Lines.Count(); i++)
@@ -75,7 +72,7 @@ namespace YouTubeTimeLineGenerator
                 _subtitleWordList.Clear();
 
                 XmlDocument myXMLDoc = new XmlDocument();
-                myXMLDoc.Load(_filesPath[0]);
+                myXMLDoc.LoadXml(strXML);
 
                 var ps = myXMLDoc.GetElementsByTagName("p");
                 //each p is a TimedLine
@@ -334,10 +331,16 @@ namespace YouTubeTimeLineGenerator
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                _filesPath = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (File.Exists(_filesPath[0]))
+                string[] filePaths = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (filePaths.Length < 1)
                 {
-                    String[] allLines = File.ReadAllLines(_filesPath[0]);
+                    return;
+                }
+
+                string filePath = filePaths[0];
+                if (File.Exists(filePath))
+                {
+                    String[] allLines = File.ReadAllLines(filePath);
 
                     string temp = "";
                     foreach (string allLine in allLines)
