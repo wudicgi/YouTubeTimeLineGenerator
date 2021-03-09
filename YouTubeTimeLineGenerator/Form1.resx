@@ -117,7 +117,7 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="richTextBox_ass.Text" xml:space="preserve">
+  <data name="richTextBoxAssResult.Text" xml:space="preserve">
     <value>Download VTT Auto-subtitles using youtube-dl. Find more: https://rg3.github.io/youtube-dl/
  - VTT Usage: youtube-dl --skip-download --write-auto-sub --sub-format vtt http://youtube.com/xxxx
  - XML Usage: Openup a YouTube video, then Press F12, type timedtext, then download the file.

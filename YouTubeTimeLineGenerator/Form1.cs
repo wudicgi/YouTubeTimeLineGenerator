@@ -25,9 +25,9 @@ namespace YouTubeTimeLineGenerator
         {
             InitializeComponent();
 
-            this.textBox_vtt.AllowDrop = true;
-            this.textBox_vtt.DragOver += new DragEventHandler(textBox_vtt_DragOver);
-            this.textBox_vtt.DragDrop += new DragEventHandler(textBox_vtt_DragDrop);
+            this.textBoxSourceFileContent.AllowDrop = true;
+            this.textBoxSourceFileContent.DragOver += new DragEventHandler(textBoxSourceFileContent_DragOver);
+            this.textBoxSourceFileContent.DragDrop += new DragEventHandler(textBoxSourceFileContent_DragDrop);
         }
 
         //private void OldOrNew()
@@ -43,14 +43,14 @@ namespace YouTubeTimeLineGenerator
         //    }
         //}
 
-        private void button_processVTT_Click(object sender, EventArgs e)
+        private void buttonProcessSourceFile_Click(object sender, EventArgs e)
         {
             try
             {
-                button_loadToSeperate.Enabled = true;
+                buttonLoadWords.Enabled = true;
                 textBox_vttResult.Clear();
                 _subtitleWordList.Clear();
-                if (radioButton_VTT.Checked == true)
+                if (radioButtonSourceFileTypeVtt.Checked == true)
                 {
                     processVTT();
                 }
@@ -58,7 +58,7 @@ namespace YouTubeTimeLineGenerator
                 {
                     processXML();
                 }
-                button_processVTT.Text = "OK!";
+                buttonProcessSourceFile.Text = "OK!";
             }
             catch
             {
@@ -81,9 +81,9 @@ namespace YouTubeTimeLineGenerator
             if (_filesPath[0] != "")
             {
                 string strXML = "";
-                for (int i = 0; i < textBox_vtt.Lines.Count(); i++)
+                for (int i = 0; i < textBoxSourceFileContent.Lines.Count(); i++)
                 {
-                    strXML += textBox_vtt.Lines[i] + "\r\n";
+                    strXML += textBoxSourceFileContent.Lines[i] + "\r\n";
                 }
 
                 textBox_vttResult.Text = strXML;
@@ -205,7 +205,7 @@ namespace YouTubeTimeLineGenerator
             //    this.Text = "go!";
             //}
 
-            textBox_vtt.Text = Regex.Replace(textBox_vtt.Text, patternSingleword, "$1$3</c>$4$5");
+            textBoxSourceFileContent.Text = Regex.Replace(textBoxSourceFileContent.Text, patternSingleword, "$1$3</c>$4$5");
         }
 
         private void processVTT()
@@ -235,7 +235,7 @@ namespace YouTubeTimeLineGenerator
 
             processSingleword();
 
-            foreach (string rawLines in textBox_vtt.Lines)
+            foreach (string rawLines in textBoxSourceFileContent.Lines)
             {
                 if (Regex.IsMatch(rawLines, patternContent))
                 {
@@ -244,7 +244,7 @@ namespace YouTubeTimeLineGenerator
             }
 
             textBox_vttResult.Text = sContent;
-            foreach (var text in textBox_vtt.Lines)
+            foreach (var text in textBoxSourceFileContent.Lines)
             {
                 //match TimeLine                
                 if (Regex.IsMatch(text, patternTime))
@@ -274,7 +274,7 @@ namespace YouTubeTimeLineGenerator
                     }
                     else
                     {
-                        richTextBox_ass.AppendText(text);
+                        richTextBoxAssResult.AppendText(text);
                     }
                 }
             }
@@ -286,34 +286,34 @@ namespace YouTubeTimeLineGenerator
             foreach (var ms in _subtitleWordList)
             {
                 //Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
-                richTextBox_Words.Select(richTextBox_Words.TextLength, 0);
-                richTextBox_Words.SelectionFont = new Font("Tahoma", 12);
+                richTextBoxSubtitleWords.Select(richTextBoxSubtitleWords.TextLength, 0);
+                richTextBoxSubtitleWords.SelectionFont = new Font("Tahoma", 12);
                 //richTextBox2.SelectionColor = randomColor;
-                richTextBox_Words.AppendText(ms.Content + " ");
+                richTextBoxSubtitleWords.AppendText(ms.Content + " ");
             }
         }
 
         private void increaseFontSize(int size)
         {
-            int selectTemp = richTextBox_Words.SelectionStart;
-            richTextBox_Words.Select(0, richTextBox_Words.TextLength);
-            richTextBox_Words.SelectionFont = new Font(richTextBox_Words.SelectedText, richTextBox_Words.SelectionFont.Size + size);
+            int selectTemp = richTextBoxSubtitleWords.SelectionStart;
+            richTextBoxSubtitleWords.Select(0, richTextBoxSubtitleWords.TextLength);
+            richTextBoxSubtitleWords.SelectionFont = new Font(richTextBoxSubtitleWords.SelectedText, richTextBoxSubtitleWords.SelectionFont.Size + size);
 
-            richTextBox_Words.SelectionStart = selectTemp;
+            richTextBoxSubtitleWords.SelectionStart = selectTemp;
         }
 
         private void decreaseFontSize(int size)
         {
-            int selectTemp = richTextBox_Words.SelectionStart;
-            richTextBox_Words.Select(0, richTextBox_Words.TextLength);
-            richTextBox_Words.SelectionFont = new Font(richTextBox_Words.SelectedText, richTextBox_Words.SelectionFont.Size - size);
+            int selectTemp = richTextBoxSubtitleWords.SelectionStart;
+            richTextBoxSubtitleWords.Select(0, richTextBoxSubtitleWords.TextLength);
+            richTextBoxSubtitleWords.SelectionFont = new Font(richTextBoxSubtitleWords.SelectedText, richTextBoxSubtitleWords.SelectionFont.Size - size);
 
-            richTextBox_Words.SelectionStart = selectTemp;
+            richTextBoxSubtitleWords.SelectionStart = selectTemp;
         }
 
         private void generateASS(List<SubtitleWord> input)
         {
-            richTextBox_ass.Clear();
+            richTextBoxAssResult.Clear();
             List<int> selectedItemIndexes = new List<int>();
             string assTimeStart = input[0].WordStart;
             string assTimeEnd = "";
@@ -327,14 +327,14 @@ namespace YouTubeTimeLineGenerator
                 {
                     assTimeEnd = m.WordEnd;
                     string assLine = ("Dialogue: 0," + assTimeStart + "," + assTimeEnd + ",Default,,0,0,0,," + assContent).Trim() + "\n";
-                    richTextBox_ass.AppendText(assLine);
+                    richTextBoxAssResult.AppendText(assLine);
                     assContent = "";
                     assTimeStart = m.WordEnd;
                 }
             }
         }
 
-        private void button_convertToAss_Click(object sender, EventArgs e)
+        private void buttonConvertToAssFile_Click(object sender, EventArgs e)
         {
             try
             {
@@ -346,7 +346,7 @@ namespace YouTubeTimeLineGenerator
             }
         }
 
-        private void textBox_vtt_DragDrop(object sender, DragEventArgs e)
+        private void textBoxSourceFileContent_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -361,12 +361,12 @@ namespace YouTubeTimeLineGenerator
                         temp += allLine + "\r\n";
                     }
 
-                    textBox_vtt.Text = temp;
+                    textBoxSourceFileContent.Text = temp;
                 }
             }
         }
 
-        private void textBox_vtt_DragOver(object sender, DragEventArgs e)
+        private void textBoxSourceFileContent_DragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
@@ -378,15 +378,15 @@ namespace YouTubeTimeLineGenerator
             }
         }
 
-        private void button_loadToSeperate_Click(object sender, EventArgs e)
+        private void buttonLoadWords_Click(object sender, EventArgs e)
         {
-            richTextBox_Words.Clear();
+            richTextBoxSubtitleWords.Clear();
             for (int i = 0; i < _subtitleWordList.Count; i++)
             {
                 _subtitleWordList[i].Selected = false;
             }
-            richTextBox_Words.Enabled = true;
-            if (radioButton_VTT.Checked == true)
+            richTextBoxSubtitleWords.Enabled = true;
+            if (radioButtonSourceFileTypeVtt.Checked == true)
             {
                 generateRichText();
             }
@@ -394,10 +394,10 @@ namespace YouTubeTimeLineGenerator
             {
                 generateRichText();
             }
-            button_processVTT.Text = "Process VTT";
+            buttonProcessSourceFile.Text = "Process VTT";
         }
 
-        private void richTextBox_Words_MouseUp(object sender, MouseEventArgs e)
+        private void richTextBoxSubtitleWords_MouseUp(object sender, MouseEventArgs e)
         {
             RichTextBox box = (RichTextBox)sender;
 
@@ -411,52 +411,47 @@ namespace YouTubeTimeLineGenerator
             if (_subtitleWordList[wordIndex].Selected)
             {
                 _subtitleWordList[wordIndex].Selected = false;
-                richTextBox_Words.SelectionStart = _subtitleWordList[wordIndex].Position + _subtitleWordList[wordIndex].Content.Length;
-                richTextBox_Words.SelectionLength = 1;
-                richTextBox_Words.SelectionBackColor = richTextBox_Words.BackColor;
-                richTextBox_Words.SelectionLength = 0;
+                richTextBoxSubtitleWords.SelectionStart = _subtitleWordList[wordIndex].Position + _subtitleWordList[wordIndex].Content.Length;
+                richTextBoxSubtitleWords.SelectionLength = 1;
+                richTextBoxSubtitleWords.SelectionBackColor = richTextBoxSubtitleWords.BackColor;
+                richTextBoxSubtitleWords.SelectionLength = 0;
             }
             else
             {
                 _subtitleWordList[wordIndex].Selected = true;
-                richTextBox_Words.SelectionStart = _subtitleWordList[wordIndex].Position + _subtitleWordList[wordIndex].Content.Length;
-                richTextBox_Words.SelectionLength = 1;
-                richTextBox_Words.SelectionBackColor = Color.Red;
-                richTextBox_Words.SelectionLength = 0;
+                richTextBoxSubtitleWords.SelectionStart = _subtitleWordList[wordIndex].Position + _subtitleWordList[wordIndex].Content.Length;
+                richTextBoxSubtitleWords.SelectionLength = 1;
+                richTextBoxSubtitleWords.SelectionBackColor = Color.Red;
+                richTextBoxSubtitleWords.SelectionLength = 0;
             }
         }
 
-        private void button_color_Click(object sender, EventArgs e)
+        private void buttonColor_Click(object sender, EventArgs e)
         {
             if (colorDialog1.ShowDialog() == DialogResult.OK)
             {
                 Color c = colorDialog1.Color;
-                button_color.BackColor = c;
+                buttonColor.BackColor = c;
                 Color c2 = Color.FromArgb(c.R > 127 ? 0 : 255, c.G > 127 ? 0 : 255, c.B > 127 ? 0 : 255);
-                button_color.ForeColor = c2;
+                buttonColor.ForeColor = c2;
 
-                int selectTemp = richTextBox_Words.SelectionStart;
+                int selectTemp = richTextBoxSubtitleWords.SelectionStart;
 
-                richTextBox_Words.Select(0, richTextBox_Words.TextLength);
-                richTextBox_Words.SelectionColor = c;
+                richTextBoxSubtitleWords.Select(0, richTextBoxSubtitleWords.TextLength);
+                richTextBoxSubtitleWords.SelectionColor = c;
                 //richTextBox2.BackColor = c2;
-                richTextBox_Words.SelectionStart = selectTemp;
+                richTextBoxSubtitleWords.SelectionStart = selectTemp;
             }
         }
 
-        private void button_decrease_Click(object sender, EventArgs e)
+        private void buttonDecreaseFontSize_Click(object sender, EventArgs e)
         {
             decreaseFontSize(1);
         }
 
-        private void button_increase_Click(object sender, EventArgs e)
+        private void buttonIncreaseFontSize_Click(object sender, EventArgs e)
         {
             increaseFontSize(1);
-        }
-
-        private void Form1_SizeChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
