@@ -17,12 +17,14 @@ namespace YouTubeTimeLineGenerator
 {
     public partial class Form1 : Form
     {
-        List<SubtitleWord> mySubtitle = new List<SubtitleWord>();
-        string[] filesPath;
+        private List<SubtitleWord> _subtitleWordList = new List<SubtitleWord>();
+
+        private string[] _filesPath;
 
         public Form1()
         {
             InitializeComponent();
+
             this.textBox_vtt.AllowDrop = true;
             this.textBox_vtt.DragOver += new DragEventHandler(textBox_vtt_DragOver);
             this.textBox_vtt.DragDrop += new DragEventHandler(textBox_vtt_DragDrop);
@@ -47,11 +49,15 @@ namespace YouTubeTimeLineGenerator
             {
                 button_loadToSeperate.Enabled = true;
                 textBox_vttResult.Clear();
-                mySubtitle.Clear();
+                _subtitleWordList.Clear();
                 if (radioButton_VTT.Checked == true)
+                {
                     processVTT();
+                }
                 else
+                {
                     processXML();
+                }
                 button_processVTT.Text = "OK!";
             }
             catch
@@ -63,17 +69,16 @@ namespace YouTubeTimeLineGenerator
         private string msToTime(string ms)
         {
             TimeSpan t = TimeSpan.FromMilliseconds(Convert.ToInt64(ms));
+
             string result = string.Format("{0:D2}:{1:D2}:{2:D2}.{3:D3}",
-                                    t.Hours,
-                                    t.Minutes,
-                                    t.Seconds,
-                                    t.Milliseconds);
+                t.Hours, t.Minutes, t.Seconds, t.Milliseconds);
+
             return result;
         }
 
         private void processXML()
         {
-            if (filesPath[0] != "")
+            if (_filesPath[0] != "")
             {
                 string strXML = "";
                 for (int i = 0; i < textBox_vtt.Lines.Count(); i++)
@@ -82,9 +87,10 @@ namespace YouTubeTimeLineGenerator
                 }
 
                 textBox_vttResult.Text = strXML;
-                mySubtitle.Clear();
+                _subtitleWordList.Clear();
+
                 XmlDocument myXMLDoc = new XmlDocument();
-                myXMLDoc.Load(filesPath[0]);
+                myXMLDoc.Load(_filesPath[0]);
 
                 var ps = myXMLDoc.GetElementsByTagName("p");
                 //each p is a TimedLine
@@ -170,7 +176,7 @@ namespace YouTubeTimeLineGenerator
                                     ssFlag++;
                                     //Debug.WriteLine(Content + "\t" + WordStart + "\t" + WordEnd);
                                     Debug.WriteLine(sContent + "\t" + msToTime(sWordStart) + "\t" + msToTime(sWordEnd) + "\t" + sPosition);
-                                    mySubtitle.Add(new SubtitleWord { Content = sContent, WordStart = msToTime(sWordStart), WordEnd = msToTime(sWordEnd), Position = sPosition, Selected = false });
+                                    _subtitleWordList.Add(new SubtitleWord { Content = sContent, WordStart = msToTime(sWordStart), WordEnd = msToTime(sWordEnd), Position = sPosition, Selected = false });
                                     sPosition = sPosition + sContent.Length + 1;
                                 }
                                 Debug.WriteLine("");
@@ -188,20 +194,22 @@ namespace YouTubeTimeLineGenerator
                 }
             }
         }
+
         private void processSingleword()
         {
             string patternSingleword = @"(.*\%(\n|\r|\r\n))(\w+)(\n|\r|\r\n)(\s(\n|\r|\r\n))";
+
             //\w+$(\n|\r|\r\n)\s
             //if (Regex.IsMatch(textBox_vtt.Text, patternSingleword))
             //{
             //    this.Text = "go!";
             //}
-            textBox_vtt.Text = Regex.Replace(textBox_vtt.Text, patternSingleword, "$1$3</c>$4$5");
 
+            textBox_vtt.Text = Regex.Replace(textBox_vtt.Text, patternSingleword, "$1$3</c>$4$5");
         }
+
         private void processVTT()
         {
-
             //when it's a timed line
             //00:00:24.510 --> 00:00:27.170 align:start position:0%
             //(\d{2}:\d{2}:\d{2}.\d{3})                 $1              00:00:24.510
@@ -218,10 +226,8 @@ namespace YouTubeTimeLineGenerator
             //<(?<WordEnd>\d{2}:\d{2}:\d{2}.\d{3})?     get WordEnd     have 0 or one time "00:21:54.539", if it's the end, there would be no time;
             string patternContent = @"(?<Content>(\w+')?([\w\.]+))(<\/?c.*?>)*<(?<WordEnd>\d{2}:\d{2}:\d{2}.\d{3})?";
 
-
-
-            string LineStart = "";
-            string LineEnd = "";
+            string lineStart = "";
+            string lineEnd = "";
             string sContent = "";
             string sWordStart = "";
             string sWordEnd = "";
@@ -231,7 +237,10 @@ namespace YouTubeTimeLineGenerator
 
             foreach (string rawLines in textBox_vtt.Lines)
             {
-                if (Regex.IsMatch(rawLines, patternContent)) sContent += rawLines + "\r\n";
+                if (Regex.IsMatch(rawLines, patternContent))
+                {
+                    sContent += rawLines + "\r\n";
+                }
             }
 
             textBox_vttResult.Text = sContent;
@@ -240,9 +249,9 @@ namespace YouTubeTimeLineGenerator
                 //match TimeLine                
                 if (Regex.IsMatch(text, patternTime))
                 {
-                    LineStart = Regex.Match(text, patternTime).Groups["TimeStart"].Value;
-                    LineEnd = Regex.Match(text, patternTime).Groups["TimeEnd"].Value;
-                    sWordStart = LineStart;
+                    lineStart = Regex.Match(text, patternTime).Groups["TimeStart"].Value;
+                    lineEnd = Regex.Match(text, patternTime).Groups["TimeEnd"].Value;
+                    sWordStart = lineStart;
                 }
                 else
                 {
@@ -252,13 +261,13 @@ namespace YouTubeTimeLineGenerator
                         {
                             if (m.Groups["WordEnd"].Value == "")
                             {
-                                sWordEnd = LineEnd;
+                                sWordEnd = lineEnd;
                             }
                             else
                             {
                                 sWordEnd = m.Groups["WordEnd"].Value;
                             }
-                            mySubtitle.Add(new SubtitleWord { Content = m.Groups["Content"].Value, WordStart = sWordStart, WordEnd = sWordEnd, Position = sPosition, Selected = false });
+                            _subtitleWordList.Add(new SubtitleWord { Content = m.Groups["Content"].Value, WordStart = sWordStart, WordEnd = sWordEnd, Position = sPosition, Selected = false });
                             sPosition = sPosition + m.Groups["Content"].Value.Length + 1;
                             sWordStart = sWordEnd;
                         }
@@ -274,7 +283,7 @@ namespace YouTubeTimeLineGenerator
         private void generateRichText()
         {
             //Random rnd = new Random();          
-            foreach (var ms in mySubtitle)
+            foreach (var ms in _subtitleWordList)
             {
                 //Color randomColor = Color.FromArgb(rnd.Next(256), rnd.Next(256), rnd.Next(256));
                 richTextBox_Words.Select(richTextBox_Words.TextLength, 0);
@@ -301,7 +310,6 @@ namespace YouTubeTimeLineGenerator
 
             richTextBox_Words.SelectionStart = selectTemp;
         }
-
 
         private void generateASS(List<SubtitleWord> input)
         {
@@ -330,7 +338,7 @@ namespace YouTubeTimeLineGenerator
         {
             try
             {
-                generateASS(mySubtitle);
+                generateASS(_subtitleWordList);
             }
             catch
             {
@@ -338,18 +346,21 @@ namespace YouTubeTimeLineGenerator
             }
         }
 
-
         private void textBox_vtt_DragDrop(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
             {
-                filesPath = (string[])e.Data.GetData(DataFormats.FileDrop);
-                if (File.Exists(filesPath[0]))
+                _filesPath = (string[])e.Data.GetData(DataFormats.FileDrop);
+                if (File.Exists(_filesPath[0]))
                 {
-                    String[] allLines = File.ReadAllLines(filesPath[0]);
+                    String[] allLines = File.ReadAllLines(_filesPath[0]);
+
                     string temp = "";
                     foreach (string allLine in allLines)
+                    {
                         temp += allLine + "\r\n";
+                    }
+
                     textBox_vtt.Text = temp;
                 }
             }
@@ -358,17 +369,21 @@ namespace YouTubeTimeLineGenerator
         private void textBox_vtt_DragOver(object sender, DragEventArgs e)
         {
             if (e.Data.GetDataPresent(DataFormats.FileDrop))
+            {
                 e.Effect = DragDropEffects.Copy;
+            }
             else
+            {
                 e.Effect = DragDropEffects.None;
+            }
         }
 
         private void button_loadToSeperate_Click(object sender, EventArgs e)
         {
             richTextBox_Words.Clear();
-            for (int i = 0; i < mySubtitle.Count; i++)
+            for (int i = 0; i < _subtitleWordList.Count; i++)
             {
-                mySubtitle[i].Selected = false;
+                _subtitleWordList[i].Selected = false;
             }
             richTextBox_Words.Enabled = true;
             if (radioButton_VTT.Checked == true)
@@ -376,7 +391,9 @@ namespace YouTubeTimeLineGenerator
                 generateRichText();
             }
             else
+            {
                 generateRichText();
+            }
             button_processVTT.Text = "Process VTT";
         }
 
@@ -384,25 +401,25 @@ namespace YouTubeTimeLineGenerator
         {
             RichTextBox box = (RichTextBox)sender;
 
-            int ClickIndex = box.GetCharIndexFromPosition(new Point(e.X, e.Y));
+            int clickIndex = box.GetCharIndexFromPosition(new Point(e.X, e.Y));
 
-            int lastSpacePosition = box.Find(" ", 0, ClickIndex, RichTextBoxFinds.Reverse);
+            int lastSpacePosition = box.Find(" ", 0, clickIndex, RichTextBoxFinds.Reverse);
 
-            int WordIndex = mySubtitle.FindIndex(x => x.Position == lastSpacePosition + 1);
-            //if ((WordIndex < 0) || (WordIndex > mySubtitle.Count - 1))
-            //    WordIndex = mySubtitle.Count - 1;            
-            if (mySubtitle[WordIndex].Selected)
+            int wordIndex = _subtitleWordList.FindIndex(x => x.Position == lastSpacePosition + 1);
+            //if ((wordIndex < 0) || (wordIndex > _subtitleWordList.Count - 1))
+            //    wordIndex = _subtitleWordList.Count - 1;            
+            if (_subtitleWordList[wordIndex].Selected)
             {
-                mySubtitle[WordIndex].Selected = false;
-                richTextBox_Words.SelectionStart = mySubtitle[WordIndex].Position + mySubtitle[WordIndex].Content.Length;
+                _subtitleWordList[wordIndex].Selected = false;
+                richTextBox_Words.SelectionStart = _subtitleWordList[wordIndex].Position + _subtitleWordList[wordIndex].Content.Length;
                 richTextBox_Words.SelectionLength = 1;
                 richTextBox_Words.SelectionBackColor = richTextBox_Words.BackColor;
                 richTextBox_Words.SelectionLength = 0;
             }
             else
             {
-                mySubtitle[WordIndex].Selected = true;
-                richTextBox_Words.SelectionStart = mySubtitle[WordIndex].Position + mySubtitle[WordIndex].Content.Length;
+                _subtitleWordList[wordIndex].Selected = true;
+                richTextBox_Words.SelectionStart = _subtitleWordList[wordIndex].Position + _subtitleWordList[wordIndex].Content.Length;
                 richTextBox_Words.SelectionLength = 1;
                 richTextBox_Words.SelectionBackColor = Color.Red;
                 richTextBox_Words.SelectionLength = 0;
